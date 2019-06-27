@@ -3,7 +3,7 @@ SendMode Input
 #SingleInstance force
 
 
-options := {delay: 150, timeout: 300, doublePress: -1, swap_backtick_escape: false, mode: "ijkl"}
+options := {delay: 10, timeout: 200, doublePress: -1, swap_backtick_escape: false, mode: "hjkl"}
 loop %0% {
 	arg := %A_Index%
 	argSplit := StrSplit(arg, "=")
@@ -16,7 +16,7 @@ loop %0% {
 #Include <dual/dual>
 dual := new Dual
 
-
+ 
 #Include <dual/defaults>
 
 #If options.mode == "hjkl"
@@ -24,6 +24,21 @@ dual := new Dual
 *j::dual.comboKey({F22: "Down"})
 *k::dual.comboKey({F22: "Up"})
 *l::dual.comboKey({F22: "Right"})
+*d::dual.comboKey({F22: "PgDn"})
+*u::dual.comboKey({F22: "PgUp"})
+
+*1::dual.comboKey({F22: "!"})
+*2::dual.comboKey({F22: "@"})
+*3::dual.comboKey({F22: "#"})
+*4::dual.comboKey({F22: "$"})
+*5::dual.comboKey({F22: "%"})
+*6::dual.comboKey({F22: "^"})
+*7::dual.comboKey({F22: "&"})
+*8::dual.comboKey({F22: "*"})
+*9::dual.comboKey({F22: "("})
+*0::dual.comboKey({F22: ")"})
+*-::dual.comboKey({F22: "_"})
+*=::dual.comboKey({F22: "+"})
 #If
 
 
@@ -31,66 +46,23 @@ dual := new Dual
 *Space::
 *Space UP::dual.combine("F22", A_ThisHotkey, {delay: options.delay, timeout: options.timeout, doublePress: options.doublePress})
 
-*BackSpace::dual.comboKey({F22: "Delete"})
+; *BackSpace::dual.comboKey({F22: "Delete"})
 
-*\::dual.comboKey({F22: "Insert"})
+; *\::dual.comboKey({F22: "Insert"})
 
-*b::dual.comboKey({F22: "Space"})
+; *b::dual.comboKey({F22: "Space"})
 
-*1::dual.comboKey({F22: "F1"})
-*2::dual.comboKey({F22: "F2"})
-*3::dual.comboKey({F22: "F3"})
-*4::dual.comboKey({F22: "F4"})
-*5::dual.comboKey({F22: "F5"})
-*6::dual.comboKey({F22: "F6"})
-*7::dual.comboKey({F22: "F7"})
-*8::dual.comboKey({F22: "F8"})
-*9::dual.comboKey({F22: "F9"})
-*0::dual.comboKey({F22: "F10"})
-*-::dual.comboKey({F22: "F11"})
-*=::dual.comboKey({F22: "F12"})
+; *p::dual.comboKey({F22: "PrintScreen"})
+; *[::dual.comboKey({F22: "ScrollLock"})
+; *]::dual.comboKey({F22: "Pause"})
 
-*p::dual.comboKey({F22: "PrintScreen"})
-*[::dual.comboKey({F22: "ScrollLock"})
-*]::dual.comboKey({F22: "Pause"})
-
-*e::dual.comboKey({F22: "Escape"})
-*`::dual.comboKey("Escape", {F22: "``"})
+; *e::dual.comboKey({F22: "Escape"})
+; *`::dual.comboKey("Escape", {F22: "``"})
 #If
 
 
-; NEEDS '*' because LCtrl key-repeat is otherwise interpreted as ALT+LCtrl.
-; *LCtrl::
-;     CtrlTabbed := false
-;     Hotkey, *Tab, CtrlTab, On   ; Begin Ctrl+Tab (and release Alt) when we press Tab.
-
-;     Send {Alt Down}             ; Press Alt (LCtrl::Alt)
-;     KeyWait, LCtrl
-
-;     if CtrlTabbed
-;         Send {Ctrl Up}          ; Release Ctrl after Ctrl+Tabbing.
-;     else
-;         Send {Alt Up}{Lwin Up}           ; Release Alt (LCtrl::Alt)
-   
-;      Hotkey, *Tab, CtrlTab, Off
-
-
-; return
-
-; CtrlTab:
-;     if (!CtrlTabbed) {
-;         Send {Alt Up}           ; Release Alt now.
-;         Send {Ctrl Down}        ; Press down Ctrl.
-;         CtrlTabbed := true      ; Set a flag so we know to release Ctrl instead of Alt.
-;     }
-;     Send {Blind}{Tab}           ; Press Tab without releasing any modifiers.
-; return
-
-
-
-
-; If you want LCtrl and LAlt to both do Alt+Tab, replace all of the above with:
-LCtrl::LWin
+; If you want LCtrl and LAlt to both do Alt+Tab, replace all of the above with
+LCtrl::RAlt
 
 
 ; NEEDS '*' because LAlt key-repeat is otherwise interpreted as CTRL+LAlt.
@@ -112,7 +84,7 @@ LCtrl::LWin
     ; Hotkey, *d, DshowDesktop, Off
 return
 
-AltTab:
+AltTab: ; LAlt + W to cmd + w
     if (!AltTabbed) {
         Send {Ctrl Up}          ; Release Ctrl now.
         Send {Alt Down}         ; Press down Alt. (Keeps the Alt+Tab menu open.)
@@ -121,7 +93,7 @@ AltTab:
     Send {Blind}{Tab}           ; Press Tab without releasing any modifiers.
 return
 
-Qclose:
+Qclose: ; LAlt + Q to Alt+F4
     if (!AltTabbed) {
         Send {Ctrl Up}          ; Release Ctrl now.
         Send {Alt Down}         ; Press down Alt. (Keeps the Alt+Tab menu open.)
@@ -143,11 +115,11 @@ return
 ; CAPSLOCK::LCTRL
 ; +CAPSLOCK::CAPSLOCK
 
-*Ralt::RCTRL
-*Rwin::Send {Lwin Down}{d}{Lwin Up}
+; *Ralt::RCTRL
+*AppsKey::Send #{d}
 
 
-$Capslock::
+$Capslock:: ;tab to switch language, press for ctrl
     Gui, 93:+Owner ; prevent display of taskbar button
     Gui, 93:Show, y-99999 NA, capslock-hole
     Send {RCtrl Down}
@@ -155,6 +127,121 @@ $Capslock::
     Gui, 93:Cancel
     Send, {RCtrl Up}
     ifinstring, A_PriorKey, Capslock
-        ; Send, {Esc}
-        SetCapsLockState % getkeystate("Capslock", "t") ? "off" : "on"
+        Send, #{Space}
+        ; SetCapsLockState % getkeystate("Capslock", "t") ? "off" : "on"
+Return
+
+;Ralt + JK to navigate btw tabs
+RAlt & j:: Send ^+{Tab}
+RAlt & k:: Send ^{Tab}
+
+Home:: WinMaximize, A
+End:: WinMinimize, A
+; PgUp:: Send #{Left}
+; PgDn:: Send #{Right}
+
+
+!l:: ;Alt + l to show/hide vscode
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist Visual Studio Code
+        Run PATH_TO\Code.exe
+        else
+        {
+                ifWinNotActive Visual Studio Code
+                    WinActivate Visual Studio Code
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+!k:: ;Alt + k to show/hide chrome
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist Chrome
+        Run PATH_TO\chrome.exe
+        else
+        {
+                ifWinNotActive Chrome
+                        WinActivate Chrome
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+!o:: ; Alt + o to show/hide explorer
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist ahk_class CabinetWClass
+                Run PATH_TO\explorer.exe
+        else
+        {
+                ifWinNotActive ahk_class CabinetWClass
+                        WinActivate ahk_class CabinetWClass
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+!n:: ; Alt + n to show/hide notepad
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist ahk_class Notepad
+                Run PATH_TO\notepad.exe
+        else
+        {
+                ifWinNotActive ahk_class Notepad
+                        WinActivate
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+
+!y:: ; Alt+y to show/hide typora
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist Typora
+                Run PATH_TO\Typora.exe
+        else
+        {
+                ifWinNotActive Typora
+                    WinActivate Typora
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+!m:: ; Alt+M to show/hide outlook
+{
+        DetectHiddenWindows, on
+        SetTitleMatchMode 2 
+        ifWinNotExist Outlook
+                Run PATH_TO\Outlook 2016
+        else
+        {
+                ifWinNotActive Outlook
+                    WinActivate Outlook
+                else
+                        WinMinimize
+        }
+        Return
+}
+
+$RShift:: ; tab to Shift + Tab(Show/Hide Conemu), press to Shift
+    Send {RShift Down}
+    KeyWait, RShift ; wait until the RShift button is released
+    Send, {RShift Up}
+    ifinstring, A_PriorKey, RShift
+        Send, +{Tab}
 Return
