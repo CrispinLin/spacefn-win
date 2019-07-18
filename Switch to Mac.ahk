@@ -1,7 +1,6 @@
 SendMode Input
 #NoEnv
 #SingleInstance force
-    
 
 options := {delay: 10, timeout: 200, doublePress: -1, swap_backtick_escape: false, mode: "hjkl"}
 loop %0% {
@@ -14,40 +13,38 @@ loop %0% {
 
 #Include <dual/dual>
 dual := new Dual
-
 #Include <dual/defaults>
 
 #If options.mode == "hjkl"
     *h::dual.comboKey({F22: "Left"})
-*j::dual.comboKey({F22: "Down"})
-*k::dual.comboKey({F22: "Up"})
-*l::dual.comboKey({F22: "Right"})
-*d::dual.comboKey({F22: "PgDn"})
-*u::dual.comboKey({F22: "PgUp"})
+    *j::dual.comboKey({F22: "Down"})
+    *k::dual.comboKey({F22: "Up"})
+    *l::dual.comboKey({F22: "Right"})
+    *d::dual.comboKey({F22: "PgDn"})
+    *u::dual.comboKey({F22: "PgUp"})
 
-*1::dual.comboKey({F22: "!"})
-*2::dual.comboKey({F22: "@"})
-*3::dual.comboKey({F22: "#"})
-*4::dual.comboKey({F22: "$"})
-*5::dual.comboKey({F22: "%"})
-*6::dual.comboKey({F22: "^"})
-*7::dual.comboKey({F22: "&"})
-*8::dual.comboKey({F22: "*"})
-*9::dual.comboKey({F22: "("})
-*0::dual.comboKey({F22: ")"})
-*-::dual.comboKey({F22: "_"})
-*=::dual.comboKey({F22: "+"})
-*[::dual.comboKey({F22: "{"}) 
-*]::dual.comboKey({F22: "}"}) 
-*\::dual.comboKey({F22: "|"}) 
-*;::dual.comboKey({F22: ":"}) 
-*'::dual.comboKey({F22: """"}) 
-*,::dual.comboKey({F22: "<"}) 
-*.::dual.comboKey({F22: ">"}) 
-*/::dual.comboKey({F22: "?"}) 
-
+    *1::dual.comboKey({F22: "!"})
+    *2::dual.comboKey({F22: "@"})
+    *3::dual.comboKey({F22: "#"})
+    *4::dual.comboKey({F22: "$"})
+    *5::dual.comboKey({F22: "%"})
+    *6::dual.comboKey({F22: "^"})
+    *7::dual.comboKey({F22: "&"})
+    *8::dual.comboKey({F22: "*"})
+    *9::dual.comboKey({F22: "("})
+    *0::dual.comboKey({F22: ")"})
+    *-::dual.comboKey({F22: "_"})
+    *=::dual.comboKey({F22: "+"})
+    *[::dual.comboKey({F22: "{"}) 
+    *]::dual.comboKey({F22: "}"}) 
+    *\::dual.comboKey({F22: "|"}) 
+    *;::dual.comboKey({F22: ":"}) 
+    *'::dual.comboKey({F22: """"}) 
+    *,::dual.comboKey({F22: "<"}) 
+    *.::dual.comboKey({F22: ">"}) 
+    */::dual.comboKey({F22: "?"}) 
 #If
-    
+
 
 #If true ; Override defaults.ahk. There will be "duplicate hotkey" errors otherwise.
     *Space::
@@ -66,18 +63,13 @@ dual := new Dual
     ; *e::dual.comboKey({F22: "Escape"})
     ; *`::dual.comboKey("Escape", {F22: "``"})
     #If
-        
-    
-    ; If you want LCtrl and LAlt to both do Alt+Tab, replace all of the above with
-    LCtrl::RAlt
-    
-    
-    ; NEEDS '*' because LAlt key-repeat is otherwise interpreted as CTRL+LAlt.
+
+
+; NEEDS '*' because LAlt key-repeat is otherwise interpreted as CTRL+LAlt.
 *LAlt::
     AltTabbed := false
     Hotkey, *Tab, AltTab, On    ; Begin Alt+Tab (and release Ctrl) when we press Tab.
     Hotkey, *q, Qclose, On
-    ;!!!! alt+d to desktop
     ; Hotkey, *d, DshowDesktop, On
     Send {Ctrl Down}            ; Press Ctrl (LAlt::Ctrl)
     KeyWait, LAlt
@@ -87,9 +79,9 @@ dual := new Dual
         Send {Ctrl Up}	          ; Release Ctrl (LAlt::Ctrl)
     Hotkey, *Tab, AltTab, Off
     Hotkey, *q, Qclose, Off
-    ;!!!! alt + d to desktop
     ; Hotkey, *d, DshowDesktop, Off
 return
+
 
 AltTab: ; LAlt + W to cmd + w
     if (!AltTabbed) {
@@ -109,6 +101,31 @@ Qclose: ; LAlt + Q to Alt+F4
     Send {Blind}{F4}           ; Press Tab without releasing any modifiers.
 return
 
+*RAlt::
+    Send {Ctrl Down}
+    KeyWait, RAlt
+    Send {Ctrl Up}
+return
+
+Ralt & k::Send ^{Tab}
+Ralt & j::Send ^+{Tab}
+
+Cycle: ; LAlt + W to cmd + w
+    if (!RAltTabbed) {
+        RAltTabbed := true       ; Set a flag so we know to release Alt instead of Ctrl.
+    }
+    Send {Blind}+{Tab}           ; Press Tab without releasing any modifiers.
+return
+
+CycleForward: 
+    Send {Ctrl Down}
+    if (!RAltTabbed) {
+        RAltTabbed := true       ; Set a flag so we know to release Alt instead of Ctrl.
+    }
+    Send {Blind}{Tab}           ; Press Tab without releasing any modifiers.
+return
+
+
 ; !!!! alt + d to desktop
 ; DshowDesktop:
 ; if (!AltTabbed) {
@@ -125,6 +142,7 @@ return
 ; *Ralt::RCTRL
 *AppsKey::Send #{d}
 
+
 $Capslock:: ;tab to switch language, press for ctrl
     Gui, 93:+Owner ; prevent display of taskbar button
     Gui, 93:Show, y-99999 NA, capslock-hole
@@ -138,8 +156,7 @@ $Capslock:: ;tab to switch language, press for ctrl
 Return
 
 ;Ralt + JK to navigate btw tabs
-RAlt & j:: Send ^+{Tab}
-RAlt & k:: Send ^{Tab}
+
 
 Home:: WinMaximize, A
 
@@ -150,9 +167,13 @@ Home:: WinMaximize, A
         Return
     }
     
-    End:: WinMinimize, A
+End:: WinMinimize, A
 ; PgUp:: Send #{Left}
 ; PgDn:: Send #{Right}
+
+
+LCtrl::RAlt
+
 
 !l:: ;Alt + l to show/hide vscode
     {
