@@ -1,5 +1,8 @@
 Overview
 ========
+based on spacefn-win, `switch to mac.ahk`brings most mac operations to windows with extra personal settings. 
+
+
 
 spacefn-win is a Windows implementation of the [SpaceFN] keyboard layout by spiceBar. It is an
 [AutoHotkey] script.
