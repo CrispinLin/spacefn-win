@@ -15,6 +15,8 @@ loop %0% {
 dual := new Dual
 #Include <dual/defaults>
 
+
+; ========== space + hjkldu to vim-like movements, space + numbers to !@#$%^&*()_+
 #If options.mode == "hjkl"
     *h::dual.comboKey({F22: "Left"})
     *j::dual.comboKey({F22: "Down"})
@@ -22,7 +24,6 @@ dual := new Dual
     *l::dual.comboKey({F22: "Right"})
     *d::dual.comboKey({F22: "PgDn"})
     *u::dual.comboKey({F22: "PgUp"})
-
     *1::dual.comboKey({F22: "!"})
     *2::dual.comboKey({F22: "@"})
     *3::dual.comboKey({F22: "#"})
@@ -45,7 +46,6 @@ dual := new Dual
     */::dual.comboKey({F22: "?"}) 
 #If
 
-
 #If true ; Override defaults.ahk. There will be "duplicate hotkey" errors otherwise.
     *Space::
     *Space UP::dual.combine("F22", A_ThisHotkey, {delay: options.delay, timeout: options.timeout, doublePress: options.doublePress})
@@ -65,6 +65,7 @@ dual := new Dual
     #If
 
 
+; ========== use LAlt + Tab like Cmd + Tab
 ; NEEDS '*' because LAlt key-repeat is otherwise interpreted as CTRL+LAlt.
 *LAlt::
     AltTabbed := false
@@ -82,7 +83,6 @@ dual := new Dual
     ; Hotkey, *d, DshowDesktop, Off
 return
 
-
 AltTab: ; LAlt + W to cmd + w
     if (!AltTabbed) {
         Send {Ctrl Up}          ; Release Ctrl now.
@@ -92,7 +92,9 @@ AltTab: ; LAlt + W to cmd + w
     Send {Blind}{Tab}           ; Press Tab without releasing any modifiers.
 return
 
-Qclose: ; LAlt + Q to Alt+F4
+
+; ========== Use LAlt + Q like Cmd + Q
+Qclose: 
     if (!AltTabbed) {
         Send {Ctrl Up}          ; Release Ctrl now.
         Send {Alt Down}         ; Press down Alt. (Keeps the Alt+Tab menu open.)
@@ -101,16 +103,27 @@ Qclose: ; LAlt + Q to Alt+F4
     Send {Blind}{F4}           ; Press Tab without releasing any modifiers.
 return
 
+
+; ========== Change RAlt to Ctrl
 *RAlt::
     Send {Ctrl Down}
     KeyWait, RAlt
     Send {Ctrl Up}
 return
 
+
+; ========== LCtrl to RAlt
+LCtrl::RAlt
+
+
+; ========== Use RAlt + jk to switch tabs in window
 Ralt & k::Send ^{Tab}
 Ralt & j::Send ^+{Tab}
+;Ralt + JK to navigate btw tabs
 
-Cycle: ; LAlt + W to cmd + w
+
+; ========== Use LAlt + w like Cmd + w
+Cycle: 
     if (!RAltTabbed) {
         RAltTabbed := true       ; Set a flag so we know to release Alt instead of Ctrl.
     }
@@ -126,24 +139,12 @@ CycleForward:
 return
 
 
-; !!!! alt + d to desktop
-; DshowDesktop:
-; if (!AltTabbed) {
-;     Send {Ctrl Up}          ; Release Ctrl now.
-;     Send {Lwin Down}         ; Press down Alt. (Keeps the Alt+Tab menu open.)
-;     AltTabbed := true       ; Set a flag so we know to release Alt instead of Ctrl.
-; }
-; Send {Blind}{d}{Lwin up}           ; Press Tab without releasing any modifiers.
-; return
-
-; CAPSLOCK::LCTRL
-; +CAPSLOCK::CAPSLOCK
-
-; *Ralt::RCTRL
+; ========== Right who-knows-what key to show desktop
 *AppsKey::Send #{d}
 
 
-$Capslock:: ;tab to switch language, press for ctrl
+; ========== tab to switch language, press for ctrl 
+$Capslock::
     Gui, 93:+Owner ; prevent display of taskbar button
     Gui, 93:Show, y-99999 NA, capslock-hole
     Send {RCtrl Down}
@@ -155,11 +156,9 @@ $Capslock:: ;tab to switch language, press for ctrl
     ; SetCapsLockState % getkeystate("Capslock", "t") ? "off" : "on"
 Return
 
-;Ralt + JK to navigate btw tabs
 
-
+; ========== Home key to Maximize current window, End to Minimize, Shift+Home to Maximize onto other screen.
 Home:: WinMaximize, A
-
 +Home:: 
     {
         Send +#{Left}
@@ -172,10 +171,8 @@ End:: WinMinimize, A
 ; PgDn:: Send #{Right}
 
 
-LCtrl::RAlt
-
-
-!l:: ;Alt + l to show/hide vscode
+; ========== Alt + l to show/hide vscode
+!l::
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -190,8 +187,10 @@ LCtrl::RAlt
         }
         Return
     }
-    
-!k:: ;Alt + k to show/hide chrome
+
+
+; ========== Alt + k to show/hide chrome    
+!k:: 
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -206,8 +205,10 @@ LCtrl::RAlt
         }
         Return
     }
-    
-!o:: ; Alt + o to show/hide explorer
+
+
+; ========== Alt + o to show/hide explorer
+!o:: 
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -222,8 +223,10 @@ LCtrl::RAlt
         }
         Return
     }
-    
-!n:: ; Alt + n to show/hide notepad
+
+
+; ========== Alt + n to show/hide notepad    
+!n:: 
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -238,9 +241,10 @@ LCtrl::RAlt
         }
         Return
     }
-    
-    
-!y:: ; Alt+y to show/hide typora
+
+
+; ========== Alt+y to show/hide typora
+!y::
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -255,8 +259,10 @@ LCtrl::RAlt
         }
         Return
     }
-    
-!m:: ; Alt+M to show/hide outlook
+
+
+; ========== Alt+M to show/hide outlook
+!m:: 
     {
         DetectHiddenWindows, on
         SetTitleMatchMode 2 
@@ -271,11 +277,30 @@ LCtrl::RAlt
         }
         Return
     }
-    
-$RShift:: ; tab to Shift + Tab(Show/Hide Conemu), press to Shift
+
+
+; ========== tab to Shift + Tab(Show/Hide Conemu), press to Shift
+$RShift:: 
     Send {RShift Down}
         KeyWait, RShift ; wait until the RShift button is released
         Send, {RShift Up}
         ifinstring, A_PriorKey, RShift
         Send, +{Space}
 Return
+
+
+; ========== something old
+; !!!! alt + d to desktop
+; DshowDesktop:
+; if (!AltTabbed) {
+;     Send {Ctrl Up}          ; Release Ctrl now.
+;     Send {Lwin Down}         ; Press down Alt. (Keeps the Alt+Tab menu open.)
+;     AltTabbed := true       ; Set a flag so we know to release Alt instead of Ctrl.
+; }
+; Send {Blind}{d}{Lwin up}           ; Press Tab without releasing any modifiers.
+; return
+
+; CAPSLOCK::LCTRL
+; +CAPSLOCK::CAPSLOCK
+
+; *Ralt::RCTRL
